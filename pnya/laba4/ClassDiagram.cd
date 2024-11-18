@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Auto">
+    <Position X="3.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACEAAhAAAAAAAAAAAAAAAAAAAAAAAAABAAAAKQAQAQ=</HashCode>
+      <FileName>Auto.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Bus">
+    <Position X="0.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAgAAACAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Bus.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cargo">
+    <Position X="5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAEAABAAEAAAAAAAABAAEAAAEAAAA=</HashCode>
+      <FileName>Cargo.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Stack&lt;T&gt;">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAACIIAAIgAgAAAAAAAAAAYAAAAQAA=</HashCode>
+      <FileName>Contant.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Dump">
+    <Position X="5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAACAAAAAAAgAAAAgAAAIAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Dump.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Menu">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAEaAQhAIGAECIFIABSRFAAEAAAIEAAADgoRBQEQwAg=</HashCode>
+      <FileName>menu.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Passanger">
+    <Position X="1.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAgAEAAAAQAAAAgAAAAAAAAAAQAAgAAAAAAAAA=</HashCode>
+      <FileName>Passanger.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Troll">
+    <Position X="2.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAEAAAAAAAAAAAAAAQABAAAAA=</HashCode>
+      <FileName>Troll.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
