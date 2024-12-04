@@ -1,0 +1,44 @@
+#include "Dump.h"
+#include <iomanip>
+#include "Exception_Vvod.h"
+
+// Конструктор по умолчанию
+Dump::Dump() : Cargo(), bedWidth(0.0) {}
+
+// Параметризированный конструктор
+Dump::Dump(const std::string& company, const std::string& modal, int year, double loadCapacity, int numberOfAxles, double bedWidth)
+    : Cargo(company, modal, year, loadCapacity, numberOfAxles), bedWidth(bedWidth) {
+}
+
+double Dump::getBedWidth() const {
+    return bedWidth;
+}
+
+void Dump::setBedWidth(double bedWidth) {
+    this->bedWidth = bedWidth;
+}
+
+// Перегрузка оператора вывода
+std::istream& operator>>(std::istream& input, Dump& dumpObj) {
+    try {
+        input >> static_cast<Cargo&>(dumpObj); // Ввод данных базового класса Cargo
+    }
+    catch (const Exception& e) {
+        throw; // Перебрасываем исключение
+    }
+
+    std::cout << "Введите ширину кузова (в метрах): ";
+    if (!(input >> dumpObj.bedWidth) || dumpObj.bedWidth <= 0) {
+        throw Exception_Vvod("Некорректная ширина кузова.");
+    }
+
+    return input;
+}
+
+
+// Перегрузка оператора вывода
+std::ostream& operator<<(std::ostream& output, const Dump& dumpObj) {
+    output << static_cast<const Cargo&>(dumpObj); // Вывод базового класса
+    output << std::setw(15) << dumpObj.bedWidth;
+    return output;
+}
