@@ -56,18 +56,15 @@ public:
         }
     }
 
-    // Фильтрация элементов
-    static Stack<T> filter(const Stack<T>& stack, std::function<bool(const T&)> condition) {
-        Stack<T> filteredStack;
-
-        // Добавляем только те элементы, которые удовлетворяют условию
+    // Подсчет элементов, удовлетворяющих условию
+    static int countIf(const Stack<T>& stack, std::function<bool(const T&)> condition) {
+        int count = 0;
         for (auto it = stack.begin(); it != stack.end(); ++it) {
             if (condition(*it)) {
-                filteredStack.push(*it);
+                ++count;
             }
         }
-
-        return filteredStack;
+        return count;
     }
 };
 

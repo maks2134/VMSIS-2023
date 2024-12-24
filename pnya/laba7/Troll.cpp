@@ -19,29 +19,42 @@ void Troll::setElectricPower(int electricPower) {
 }
 
 void Troll::serialize(std::ofstream& output) const {
-	Passanger::serialize(output); // Сериализация полей базового класса
-	output << ' ' << electricPower;
+    Passanger::serialize(output); // Сериализация полей базового класса
+    output << ' ' << electricPower;
 }
 
 void Troll::deserialize(std::ifstream& input) {
-	Passanger::deserialize(input); // Десериализация полей базового класса
-	if (!(input >> electricPower)) {
-		throw Exception_Vvod("Ошибка при чтении данных Troll.");
-	}
+    Passanger::deserialize(input); // Десериализация полей базового класса
+    if (!(input >> electricPower)) {
+        throw Exception_Vvod("Ошибка при чтении данных Troll.");
+    }
 }
 
-std::istream& operator>>(std::istream& input, Troll& trollObj) {
-    try {
-        input >> static_cast<Passanger&>(trollObj); // Ввод данных базового класса Passanger
-    }
-    catch (const Exception& e) {
-        throw; // Перебрасываем исключение
-    }
+void Troll::serializeBinary(std::ofstream& output) const {
+    Passanger::serializeBinary(output); // Сериализация полей базового класса
+    output.write(reinterpret_cast<const char*>(&electricPower), sizeof(electricPower));
+}
 
-    std::cout << "Введите электро-мощность: ";
-    if (!(input >> trollObj.electricPower) || trollObj.electricPower <= 0) {
-        throw Exception_Vvod("Некорректное значение электро-мощности.");
+void Troll::deserializeBinary(std::ifstream& input) {
+    Passanger::deserializeBinary(input); // Десериализация полей базового класса
+    if (!input.read(reinterpret_cast<char*>(&electricPower), sizeof(electricPower))) {
+        throw Exception_Vvod("Ошибка при чтении данных Troll.");
     }
+}
+
+
+std::istream& operator>>(std::istream& input, Troll& trollObj) {
+    input >> static_cast<Passanger&>(trollObj);
+
+    do {
+        std::cout << "Введите электро-мощность: ";
+        if (input >> trollObj.electricPower && trollObj.electricPower > 0) {
+            break;
+        }
+        std::cerr << "Некорректное значение электро-мощности. Повторите ввод." << std::endl;
+        input.clear();
+        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    } while (true);
 
     return input;
 }

@@ -1,3 +1,4 @@
+// В заголовочный файл Dump.h добавим объявления методов для работы с бинарными файлами
 #ifndef LAB3_DUMP_H
 #define LAB3_DUMP_H
 #include "Cargo.h"
@@ -18,6 +19,8 @@ public:
 
     void serialize(std::ofstream& output) const;
     void deserialize(std::ifstream& input);
+    void serializeBinary(std::ofstream& output) const;
+    void deserializeBinary(std::ifstream& input);
 
     // Перегрузка операторов ввода и вывода
     friend std::istream& operator>>(std::istream& input, Dump& dumpObj);

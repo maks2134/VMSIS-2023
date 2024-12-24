@@ -1,3 +1,4 @@
+// В заголовочный файл Cargo.h добавим объявления методов для работы с бинарными файлами
 #ifndef LAB3_CARGO_H
 #define LAB3_CARGO_H
 #include "Auto.h"
@@ -22,6 +23,8 @@ public:
 
     void serialize(std::ofstream& output) const;
     void deserialize(std::ifstream& input);
+    void serializeBinary(std::ofstream& output) const;
+    void deserializeBinary(std::ifstream& input);
 
     // Перегрузка операторов
     friend std::istream& operator>>(std::istream& input, Cargo& cargoObj);
@@ -29,3 +32,4 @@ public:
 };
 
 #endif //LAB3_CARGO_H
+

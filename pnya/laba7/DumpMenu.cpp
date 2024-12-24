@@ -1,3 +1,4 @@
+// В файл реализации DumpMenu.cpp добавим определения методов для работы с бинарными файлами
 #include "DumpMenu.h"
 #include "Exception_Vvod.h"
 #include "DumpFile.h"
@@ -59,6 +60,16 @@ void DumpMenu::loadDumpsFromFile() {
     dumpFile.loadFromFile(dumps);
 }
 
+void DumpMenu::saveDumpsToBinaryFile() {
+    DumpFile dumpFile("C:\\Users\\maks2\\source\\repos\\Lab5\\Lab5\\dump.bin");
+    dumpFile.saveToBinaryFile(dumps);
+}
+
+void DumpMenu::loadDumpsFromBinaryFile() {
+    DumpFile dumpFile("C:\\Users\\maks2\\source\\repos\\Lab5\\Lab5\\dump.bin");
+    dumpFile.loadFromBinaryFile(dumps);
+}
+
 void DumpMenu::sortDumps() {
     Algorithms<Dump>::sort(dumps, [](const Dump& a, const Dump& b) {
         return a.getYear() < b.getYear();
@@ -79,24 +90,35 @@ void DumpMenu::removeByCondition() {
     std::cout << YELLOW << "Удалены самосвалы, выпущенные до или в " << maxYear << " год." << RESET << std::endl;
 }
 
-void DumpMenu::filterDumps() const {
-    Stack<Dump> filteredDumps = Algorithms<Dump>::filter(dumps, [](const Dump& d) {
-        int minLoad;
-        std::cout << "Введите минимальную грузоподъемность для фильтрации: ";
-        std::cin >> minLoad;
+void DumpMenu::countDumpsByCondition() const {
+    int minLoad;
+    std::cout << "Введите минимальную грузоподъемность для подсчета: ";
+    std::cin >> minLoad;
+
+    int count = Algorithms<Dump>::countIf(dumps, [minLoad](const Dump& d) {
         return d.getBedWidth() >= minLoad;
         });
 
-    if (filteredDumps.isEmpty()) {
-        std::cout << RED << "Нет самосвалов, удовлетворяющих фильтру." << RESET << std::endl;
-    }
-    else {
-        std::cout << YELLOW << "Отфильтрованные самосвалы:" << RESET << std::endl;
-        filteredDumps.forEach([](const Dump& dump) {
-            std::cout << dump << std::endl;
+    std::cout << YELLOW << "Количество самосвалов с грузоподъемностью не менее " << minLoad << ": " << count << RESET << std::endl;
+}
+
+void DumpMenu::findDumpByCondition() const {
+    try {
+        int year;
+        std::cout << "Введите год выпуска для поиска: ";
+        std::cin >> year;
+
+        Dump foundDump = Algorithms<Dump>::findByCondition(dumps, [year](const Dump& d) {
+            return d.getYear() == year;
             });
+
+        std::cout << YELLOW << "Найден самосвал: " << foundDump << RESET << std::endl;
+    }
+    catch (const std::runtime_error& e) {
+        std::cerr << RED << "Ошибка: " << e.what() << RESET << std::endl;
     }
 }
+
 
 void DumpMenu::showMenu() {
     int choice;
@@ -107,9 +129,12 @@ void DumpMenu::showMenu() {
         std::cout << "3. Удалить последний Самосвал\n";
         std::cout << "4. Загрузить данные с файла\n";
         std::cout << "5. Сохранить данные в файл\n";
-        std::cout << "6. Сортировка самосвалов\n";
-        std::cout << "7. Удаление по условию\n";
-        std::cout << "8. Фильтрация самосвалов\n";
+        std::cout << "6. Загрузить данные из бинарного файла\n";
+        std::cout << "7. Сохранить данные в бинарный файл\n";
+        std::cout << "8. Сортировка самосвалов\n";
+        std::cout << "9. Удаление по условию\n";
+        std::cout << "10. Подсчет самосвалов по условию\n";
+        std::cout << "11. Найти самосвал по условию\n";
         std::cout << "0. Вернуться в главное меню\n";
         std::cout << "Выберите опцию: ";
 
@@ -121,11 +146,16 @@ void DumpMenu::showMenu() {
         case 3: removeDump(); break;
         case 4: loadDumpsFromFile(); break;
         case 5: saveDumpsToFile(); break;
-        case 6: sortDumps(); break;
-        case 7: removeByCondition(); break;
-        case 8: filterDumps(); break;
+        case 6: loadDumpsFromBinaryFile(); break;
+        case 7: saveDumpsToBinaryFile(); break;
+        case 8: sortDumps(); break;
+        case 9: removeByCondition(); break;
+        case 10: countDumpsByCondition(); break;
+        case 11: findDumpByCondition(); break;
         case 0: break;
         default: std::cout << RED << "Некорректный выбор. Повторите попытку." << RESET << "\n";
         }
     } while (choice != 0);
 }
+
+

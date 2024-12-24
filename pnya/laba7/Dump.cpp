@@ -1,3 +1,4 @@
+// В файл реализации Dump.cpp добавим определения методов для работы с бинарными файлами
 #include "Dump.h"
 #include <iomanip>
 #include <fstream>
@@ -31,6 +32,18 @@ void Dump::deserialize(std::ifstream& input) {
     }
 }
 
+void Dump::serializeBinary(std::ofstream& output) const {
+    Cargo::serializeBinary(output); // Сериализация полей базового класса в бинарный файл
+    output.write(reinterpret_cast<const char*>(&bedWidth), sizeof(bedWidth));
+}
+
+void Dump::deserializeBinary(std::ifstream& input) {
+    Cargo::deserializeBinary(input); // Десериализация полей базового класса из бинарного файла
+    if (!input.read(reinterpret_cast<char*>(&bedWidth), sizeof(bedWidth))) {
+        throw Exception_Vvod("Ошибка при чтении данных Dump из бинарного файла.");
+    }
+}
+
 // Перегрузка оператора ввода
 std::istream& operator>>(std::istream& input, Dump& dumpObj) {
     try {
@@ -40,10 +53,15 @@ std::istream& operator>>(std::istream& input, Dump& dumpObj) {
         throw; // Перебрасываем исключение
     }
 
-    std::cout << "Введите ширину кузова (в метрах): ";
-    if (!(input >> dumpObj.bedWidth) || dumpObj.bedWidth <= 0) {
-        throw Exception_Vvod("Некорректная ширина кузова.");
-    }
+    do {
+        std::cout << "Введите ширину кузова (в метрах): ";
+        if (input >> dumpObj.bedWidth && dumpObj.bedWidth > 0) {
+            break;
+        }
+        std::cerr << "Некорректная ширина кузова. Повторите ввод." << std::endl;
+        input.clear();
+        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    } while (true);
 
     return input;
 }

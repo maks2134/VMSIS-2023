@@ -1,9 +1,8 @@
 #include "Auto.h"
 #include <iomanip>
-#include <sstream> // Include for stringstream
+#include <sstream>
 #include "Exception_Vvod.h"
 #include <fstream>
-
 
 Auto::Auto() : company(""), modal(""), year(0) {}
 
@@ -57,7 +56,17 @@ void Auto::deserialize(std::ifstream& input) {
     }
 }
 
+void Auto::deserializeBinary(std::ifstream& input) {
+    std::getline(input, company, '\0');
+    std::getline(input, modal, '\0');
+    input.read(reinterpret_cast<char*>(&year), sizeof(year));
+}
 
+void Auto::serializeBinary(std::ofstream& output) const {
+	output.write(company.c_str(), company.size() + 1); // Запись строки с завершающим нулем
+	output.write(modal.c_str(), modal.size() + 1); // Запись строки с завершающим нулем
+	output.write(reinterpret_cast<const char*>(&year), sizeof(year));
+}
 
 std::ostream& operator<<(std::ostream& output, const Auto& autoObj) {
     output << std::left << std::setw(15) << autoObj.company
@@ -67,20 +76,35 @@ std::ostream& operator<<(std::ostream& output, const Auto& autoObj) {
 }
 
 std::istream& operator>>(std::istream& input, Auto& autoObj) {
-	std::cout << "Введите название компании: ";
-	if (!(input >> autoObj.company) || autoObj.company.empty()) {
-		throw Exception_Vvod("Некорректное название компании.");
-	}
+    do {
+        std::cout << "Введите название компании: ";
+        if (input >> autoObj.company && !autoObj.company.empty()) {
+            break;
+        }
+        std::cerr << "Некорректное название компании. Повторите ввод." << std::endl;
+        input.clear();
+        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    } while (true);
 
-	std::cout << "Введите модель: ";
-	if (!(input >> autoObj.modal) || autoObj.modal.empty()) {
-		throw Exception_Vvod("Некорректная модель.");
-	}
+    do {
+        std::cout << "Введите модель: ";
+        if (input >> autoObj.modal && !autoObj.modal.empty()) {
+            break;
+        }
+        std::cerr << "Некорректная модель. Повторите ввод." << std::endl;
+        input.clear();
+        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    } while (true);
 
-	std::cout << "Введите год выпуска: ";
-	if (!(input >> autoObj.year) || autoObj.year < 1886 || autoObj.year > 2024) {
-		throw Exception_Vvod("Некорректный год выпуска.");
-	}
+    do {
+        std::cout << "Введите год выпуска: ";
+        if (input >> autoObj.year && autoObj.year >= 1886 && autoObj.year <= 2024) {
+            break;
+        }
+        std::cerr << "Некорректный год выпуска. Повторите ввод." << std::endl;
+        input.clear();
+        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    } while (true);
 
-	return input;
+    return input;
 }

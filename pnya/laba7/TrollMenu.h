@@ -18,16 +18,18 @@ public:
 
 private:
     Stack<Troll> trolls;
-
+ 
     void addTroll();
     void displayTrolls() const;
     void removeTroll();
     void saveTrollsToFile();
-	void loadTrollsFromFile();
+    void loadTrollsFromFile();
     void searchTroll() const;
     void sortTrolls();
-	void removeByCondition();
-	void filterTrolls() const;
+    void removeByCondition();
+    void countTrollsByCondition() const;
+	void loadTrollsFromBinaryFile();
+	void saveTrollsToBinaryFile();
 
 };
 

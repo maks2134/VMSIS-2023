@@ -26,9 +26,13 @@ private:
     void removeBus();
     void saveBusesToFile();
     void loadBusesFromFile();
+    void loadBusesFromBinaryFile();
+    void saveBusesToBinaryFile();
     void sortBuses();
     void removeByCondition();
-    void filterBuses() const;
+    void countBusesByCondition() const;
+    void findBusByCondition() const; // Новый метод
 };
 
-#endif
+
+#endif // BUS_MENU_H

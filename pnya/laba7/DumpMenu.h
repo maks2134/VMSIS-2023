@@ -26,9 +26,13 @@ private:
     void removeDump();
     void saveDumpsToFile();
     void loadDumpsFromFile();
+    void saveDumpsToBinaryFile();
+    void loadDumpsFromBinaryFile();
     void sortDumps();
     void removeByCondition();
-    void filterDumps() const;
+    void countDumpsByCondition() const;
+    void findDumpByCondition() const; // Новый метод
 };
 
-#endif
+
+#endif // DUMP_MENU_H
