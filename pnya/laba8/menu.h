@@ -11,8 +11,8 @@ public:
     void showMenu();
 
 private:
-    DumpMenu dumpMenu;
-    BusMenu busMenu;
+    //DumpMenu dumpMenu;
+    //BusMenu busMenu;
     TrollMenu trollMenu;
 };
 

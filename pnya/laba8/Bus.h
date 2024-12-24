@@ -17,6 +17,9 @@ public:
 
 	void serialize(std::ofstream& output) const;
 	void deserialize(std::ifstream& input);
+
+	void serializeBinary(std::ofstream& output) const;
+	void deserializeBinary(std::ifstream& input);
     
     friend std::istream& operator>>(std::istream& input, Bus& pasObj);
     friend std::ostream& operator<<(std::ostream& output, const Bus& pasObj);

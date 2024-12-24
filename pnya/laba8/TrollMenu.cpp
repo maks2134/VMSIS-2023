@@ -21,7 +21,7 @@ void TrollMenu::addTroll() {
 
 void TrollMenu::displayTrolls() const {
     if (trolls.empty()) {
-        std::cout << RED << "Нет данных для троллейбусов." << RESET << std::endl;
+        std::cout << RED << "Нет данных для троллейбусов." << RED << std::endl;
         return;
     }
 
@@ -41,48 +41,45 @@ void TrollMenu::displayTrolls() const {
 
 void TrollMenu::removeTroll() {
     if (trolls.empty()) {
-        std::cout << RED << "Нет троллейбусов для удаления." << RESET << std::endl;
+        std::cout << RED << "Нет троллейбусов для удаления." << RED << std::endl;
     }
     else {
         auto it = trolls.begin();
-        std::cout << YELLOW << "Удалён троллейбус: " << it->second << RESET << std::endl;
+        std::cout << YELLOW << "Удалён троллейбус: " << it->second << YELLOW << std::endl;
         trolls.erase(it);
     }
 }
 
-void TrollMenu::saveTrollsToFile() {
-    TrollFile busFile("C:\\Users\\maks2\\source\\repos\\Lab5\\Lab5\\buses.txt");
-    busFile.saveToFile(trolls);
-}
-
-void TrollMenu::loadTrollsFromFile() {
-    TrollFile busFile("C:\\Users\\maks2\\source\\repos\\Lab5\\Lab5\\buses.txt");
-    busFile.loadFromFile(trolls);
-}
+//void TrollMenu::saveTrollsToFile() {
+//    TrollFile busFile("C:\\Users\\maks2\\source\\repos\\Lab5\\Lab5\\Troll.txt");
+//    busFile.saveToFile(trolls);
+//}
+//
+//void TrollMenu::loadTrollsFromFile() {
+//    TrollFile busFile("C:\\Users\\maks2\\source\\repos\\Lab5\\Lab5\\Troll.txt");
+//    busFile.loadFromFile(trolls);
+//}
 
 void TrollMenu::searchTroll() const {
     try {
-        int minPower;
-        std::cout << "Введите минимальную электро-мощность для поиска: ";
-        std::cin >> minPower;
+        Troll foundTroll = Algorithms<int, Troll>::findByCondition(trolls, [](const Troll& t) {
+            int minPower;
+            std::cout << "Введите минимальную электро-мощность для поиска: ";
+            std::cin >> minPower;
+            return t.getElectricPower() >= minPower;
+            });
 
-        auto it = trolls.lower_bound(minPower);
-        if (it != trolls.end()) {
-            std::cout << YELLOW << "Найденный троллейбус:" << std::endl;
-            std::cout << it->second << RESET << std::endl;
-        }
-        else {
-            std::cout << RED << "Троллейбус не найден." << RESET << std::endl;
-        }
+        std::cout << YELLOW << "Найденный троллейбус:" << std::endl;
+        std::cout << foundTroll << YELLOW << std::endl;
     }
     catch (const std::exception& e) {
-        std::cerr << RED << "Ошибка: " << e.what() << RESET << std::endl;
+        std::cerr << RED << "Ошибка: " << e.what() << YELLOW << std::endl;
     }
 }
 
 void TrollMenu::sortTrolls() {
     // multimap автоматически сортирует элементы по ключу, так что сортировка не требуется
-    std::cout << YELLOW << "Троллейбусы отсортированы по электро-мощности (по возрастанию)." << RESET << std::endl;
+    std::cout << YELLOW << "Троллейбусы отсортированы по электро-мощности (по возрастанию)." << YELLOW << std::endl;
 }
 
 void TrollMenu::removeByCondition() {
@@ -99,30 +96,29 @@ void TrollMenu::removeByCondition() {
         }
     }
 
-    std::cout << YELLOW << "Удалены троллейбусы, выпущенные до или в " << maxYear << " год." << RESET << std::endl;
+    std::cout << YELLOW << "Удалены троллейбусы, выпущенные до или в " << maxYear << " год." << YELLOW << std::endl;
 }
 
-void TrollMenu::filterTrolls() const {
+//void TrollMenu::saveTrollsToBinaryFile() {
+//    TrollFile busFile("C:\\Users\\maks2\\source\\repos\\Lab5\\Lab5\\Troll.bin");
+//    busFile.saveToBinaryFile(trolls);
+//}
+//
+//void TrollMenu::loadTrollsFromBinaryFile() {
+//    TrollFile busFile("C:\\Users\\maks2\\source\\repos\\Lab5\\Lab5\\Troll.bin");
+//    busFile.loadFromBinaryFile(trolls);
+//}
+
+void TrollMenu::countTrollsByCondition() const {
     int minSeats;
-    std::cout << "Введите минимальное количество мест для фильтрации: ";
+    std::cout << "Введите минимальное количество мест для подсчета: ";
     std::cin >> minSeats;
 
-    std::multimap<int, Troll> filteredTrolls;
-    for (const auto& pair : trolls) {
-        if (pair.second.getSeatsNumber() >= minSeats) {
-            filteredTrolls.insert(pair);
-        }
-    }
+    int count = Algorithms<int, Troll>::countIf(trolls, [minSeats](const Troll& t) {
+        return t.getSeatsNumber() >= minSeats;
+        });
 
-    if (filteredTrolls.empty()) {
-        std::cout << RED << "Нет троллейбусов, удовлетворяющих фильтру." << RESET << std::endl;
-    }
-    else {
-        std::cout << YELLOW << "Отфильтрованные троллейбусы:" << RESET << std::endl;
-        for (const auto& pair : filteredTrolls) {
-            std::cout << pair.second << std::endl;
-        }
-    }
+    std::cout << YELLOW << "Количество троллейбусов с не менее чем " << minSeats << " мест: " << count << YELLOW << std::endl;
 }
 
 void TrollMenu::showMenu() {
@@ -135,10 +131,12 @@ void TrollMenu::showMenu() {
         std::cout << "3. Удалить последний Троллейбус\n";
         std::cout << "4. Сохранить данные в файл\n";
         std::cout << "5. Загрузить данные c файла\n";
-        std::cout << "6. Поиск троллейбуса\n";
-        std::cout << "7. Сортировка троллейбусов\n";
-        std::cout << "8. Удаление по условию\n";
-        std::cout << "9. Фильтрация троллейбусов\n";
+        std::cout << "6. Сохранить данные в бинарный файл\n";
+        std::cout << "7. Загрузить данные из бинарного файла\n";
+        std::cout << "8. Поиск троллейбуса\n";
+        std::cout << "9. Сортировка троллейбусов\n";
+        std::cout << "10. Удаление по условию\n";
+        std::cout << "11. Продсчитать тролейбусы\n";
         std::cout << "0. Вернуться в главное меню\n";
         std::cout << "Выберите опцию: ";
 
@@ -148,12 +146,14 @@ void TrollMenu::showMenu() {
         case 1: addTroll(); break;
         case 2: displayTrolls(); break;
         case 3: removeTroll(); break;
-        case 4: saveTrollsToFile(); break;
-        case 5: loadTrollsFromFile(); break;
-        case 6: searchTroll(); break;
-        case 7: sortTrolls(); break;
-        case 8: removeByCondition(); break;
-        case 9: filterTrolls(); break;
+        //case 4: saveTrollsToFile(); break;
+        //case 5: loadTrollsFromFile(); break;
+        //case 6: saveTrollsToBinaryFile(); break;
+        //case 7: loadTrollsFromBinaryFile(); break;
+        case 8: searchTroll(); break;
+        case 9: sortTrolls(); break;
+        case 10: removeByCondition(); break;
+        case 11: countTrollsByCondition(); break;
         case 0: break;
         default: std::cout << RED << "Некорректный выбор. Повторите попытку." << RESET << "\n";
         }

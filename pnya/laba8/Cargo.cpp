@@ -1,3 +1,4 @@
+// В файл реализации Cargo.cpp добавим определения методов для работы с бинарными файлами
 #include "Cargo.h"
 #include <iostream>
 #include <iomanip>
@@ -28,14 +29,28 @@ void Cargo::setNumberOfAxles(int numberOfAxles) {
 }
 
 void Cargo::serialize(std::ofstream& output) const {
-    Cargo::serialize(output); // Сериализация полей базового класса
+    Auto::serialize(output); // Сериализация полей базового класса
     output << ' ' << loadCapacity << ' ' << numberOfAxles;
 }
 
 void Cargo::deserialize(std::ifstream& input) {
-    Cargo::deserialize(input); // Десериализация полей базового класса
+    Auto::deserialize(input); // Десериализация полей базового класса
     if (!(input >> numberOfAxles >> loadCapacity)) {
         throw Exception_Vvod("Ошибка при чтении данных Cargo.");
+    }
+}
+
+void Cargo::serializeBinary(std::ofstream& output) const {
+    Auto::serializeBinary(output); // Сериализация полей базового класса в бинарный файл
+    output.write(reinterpret_cast<const char*>(&loadCapacity), sizeof(loadCapacity));
+    output.write(reinterpret_cast<const char*>(&numberOfAxles), sizeof(numberOfAxles));
+}
+
+void Cargo::deserializeBinary(std::ifstream& input) {
+    Auto::deserializeBinary(input); // Десериализация полей базового класса из бинарного файла
+    if (!input.read(reinterpret_cast<char*>(&loadCapacity), sizeof(loadCapacity)) ||
+        !input.read(reinterpret_cast<char*>(&numberOfAxles), sizeof(numberOfAxles))) {
+        throw Exception_Vvod("Ошибка при чтении данных Cargo из бинарного файла.");
     }
 }
 
@@ -47,15 +62,25 @@ std::istream& operator>>(std::istream& input, Cargo& cargoObj) {
         throw; // Перебрасываем исключение
     }
 
-    std::cout << "Введите грузоподъёмность: ";
-    if (!(input >> cargoObj.loadCapacity) || cargoObj.loadCapacity <= 0) {
-        throw Exception_Vvod("Некорректная грузоподъёмность.");
-    }
+    do {
+        std::cout << "Введите грузоподъёмность: ";
+        if (input >> cargoObj.loadCapacity && cargoObj.loadCapacity > 0) {
+            break;
+        }
+        std::cerr << "Некорректная грузоподъёмность. Повторите ввод." << std::endl;
+        input.clear();
+        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    } while (true);
 
-    std::cout << "Введите количество осей: ";
-    if (!(input >> cargoObj.numberOfAxles) || cargoObj.numberOfAxles <= 0) {
-        throw Exception_Vvod("Некорректное количество осей.");
-    }
+    do {
+        std::cout << "Введите количество осей: ";
+        if (input >> cargoObj.numberOfAxles && cargoObj.numberOfAxles > 0) {
+            break;
+        }
+        std::cerr << "Некорректное количество осей. Повторите ввод." << std::endl;
+        input.clear();
+        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    } while (true);
 
     return input;
 }
@@ -66,3 +91,4 @@ std::ostream& operator<<(std::ostream& output, const Cargo& cargoObj) {
         << std::setw(10) << cargoObj.numberOfAxles;
     return output;
 }
+

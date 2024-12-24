@@ -1,27 +1,29 @@
+// Algorithms.h
 #ifndef ALGORITHMS_H
 #define ALGORITHMS_H
 
-#include "Contant.h"
+#include <map>
 #include <vector>
 #include <algorithm>
 #include <functional>
+#include <stdexcept>
 
-template <typename T>
+template <typename TKey, typename TValue>
 class Algorithms {
 public:
     // Поиск элемента по условию
-    static T findByCondition(const Stack<T>& stack, std::function<bool(const T&)> condition) {
+    static TValue findByCondition(const std::multimap<TKey, TValue>& stack, std::function<bool(const TValue&)> condition) {
         for (auto it = stack.begin(); it != stack.end(); ++it) {
-            if (condition(*it)) {
-                return *it;
+            if (condition(it->second)) {
+                return it->second;
             }
         }
         throw std::runtime_error("Элемент, удовлетворяющий условию, не найден.");
     }
 
     // Сортировка элементов контейнера по заданному критерию
-    static void sort(Stack<T>& stack, std::function<bool(const T&, const T&)> comparator) {
-        std::vector<T> elements;
+    static void sort(std::multimap<TKey, TValue>& stack, std::function<bool(const TValue&, const TValue&)> comparator) {
+        std::vector<std::pair<TKey, TValue>> elements;
 
         // Переносим элементы из контейнера в вектор
         for (auto it = stack.begin(); it != stack.end(); ++it) {
@@ -29,45 +31,38 @@ public:
         }
 
         // Сортируем вектор
-        std::sort(elements.begin(), elements.end(), comparator);
+        std::sort(elements.begin(), elements.end(), [&comparator](const auto& a, const auto& b) {
+            return comparator(a.second, b.second);
+            });
 
         // Перезаписываем контейнер
         stack.clear(); // Очищаем контейнер
-        for (const T& elem : elements) {
-            stack.push(elem); // Добавляем отсортированные элементы обратно
+        for (const auto& elem : elements) {
+            stack.insert(elem); // Добавляем отсортированные элементы обратно
         }
     }
 
     // Удаление элементов по условию
-    static void removeIf(Stack<T>& stack, std::function<bool(const T&)> condition) {
-        std::vector<T> elements;
-
-        // Переносим элементы, которые не подходят под условие, во временный вектор
-        for (auto it = stack.begin(); it != stack.end(); ++it) {
-            if (!condition(*it)) {
-                elements.push_back(*it);
+    static void removeIf(std::multimap<TKey, TValue>& stack, std::function<bool(const TValue&)> condition) {
+        for (auto it = stack.begin(); it != stack.end(); ) {
+            if (condition(it->second)) {
+                it = stack.erase(it);
             }
-        }
-
-        // Перезаписываем контейнер
-        stack.clear();
-        for (const T& elem : elements) {
-            stack.push(elem);
+            else {
+                ++it;
+            }
         }
     }
 
-    // Фильтрация элементов
-    static Stack<T> filter(const Stack<T>& stack, std::function<bool(const T&)> condition) {
-        Stack<T> filteredStack;
-
-        // Добавляем только те элементы, которые удовлетворяют условию
+    // Подсчет элементов, удовлетворяющих условию
+    static int countIf(const std::multimap<TKey, TValue>& stack, std::function<bool(const TValue&)> condition) {
+        int count = 0;
         for (auto it = stack.begin(); it != stack.end(); ++it) {
-            if (condition(*it)) {
-                filteredStack.push(*it);
+            if (condition(it->second)) {
+                ++count;
             }
         }
-
-        return filteredStack;
+        return count;
     }
 };
 

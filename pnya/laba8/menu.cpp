@@ -9,7 +9,7 @@
 #define RED     "\033[31m"
 #define RESET   "\033[0m"
 
-Menu::Menu() : dumpMenu(), busMenu(), trollMenu() {}
+Menu::Menu() :  trollMenu() {}
 
 void Menu::showMenu() {
     setlocale(LC_ALL, "Russian");
@@ -27,8 +27,8 @@ void Menu::showMenu() {
         std::cin >> choice;
 
         switch (choice) {
-        case 1: dumpMenu.showMenu(); break;
-        case 2: busMenu.showMenu(); break;
+        case 1:  break;
+        case 2:  break;
         case 3: trollMenu.showMenu(); break;
         case 0: std::cout << "Выход из программы.\n"; break;
         default: std::cout << RED << "Некорректный выбор. Повторите попытку." << RESET << "\n";

@@ -132,7 +132,6 @@
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="Passanger.cpp" />
     <ClCompile Include="Troll.cpp" />
-    <ClCompile Include="TrollFile.cpp" />
     <ClCompile Include="TrollMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +160,7 @@
     <None Include="ClassDiagram2.cd" />
     <None Include="ClassDiagram21.cd" />
     <None Include="ClassDiagram22.cd" />
+    <None Include="ClassDiagram23.cd" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Troll.txt" />

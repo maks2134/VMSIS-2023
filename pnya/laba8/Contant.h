@@ -3,39 +3,20 @@
 
 #include <iostream>
 #include <functional>
-#include <vector>
-#include <algorithm>
+#include <map>
 
-template <typename T>
-class Stack {
+template <typename TKey, typename TValue>
+class MultiMap {
 private:
-    class Node {
-    private:
-        T data;
-        Node* next;
-
-    public:
-        Node(const T& data, Node* next = nullptr) : data(data), next(next) {}
-        T getData() const { return data; }
-        Node* getNext() const { return next; }
-        friend class Stack<T>;
-    };
-
-    Node* topNode;
+    std::multimap<TKey, TValue> mmap;
 
 public:
+    MultiMap() = default;
 
-    Stack() : topNode(nullptr) {}
+    ~MultiMap() = default;
 
-    ~Stack() {
-        while (!isEmpty()) {
-            pop();
-        }
-    }
-
-    void push(const T& data) {
-        Node* newNode = new Node(data, topNode);
-        topNode = newNode;
+    void push(const TKey& key, const TValue& value) {
+        mmap.insert({ key, value });
     }
 
     void pop() {
@@ -43,55 +24,39 @@ public:
             std::cout << "Стек пуст!" << std::endl;
             return;
         }
-        Node* temp = topNode;
-        topNode = topNode->next;
-        delete temp;
-    }
-    void clear() {
-        while (!isEmpty()) {
-            pop();
-        }
+        auto it = mmap.begin();
+        mmap.erase(it);
     }
 
-    T top() const {
+    void clear() {
+        mmap.clear();
+    }
+
+    TValue top() const {
         if (isEmpty()) {
             throw std::runtime_error("Стек пуст!");
         }
-        return topNode->data;
+        return mmap.begin()->second;
     }
 
     bool isEmpty() const {
-        return topNode == nullptr;
+        return mmap.empty();
     }
 
-    void forEach(std::function<void(const T&)> action) const {
-        Node* current = topNode;
-        while (current) {
-            action(current->data);
-            current = current->next;
+    void forEach(std::function<void(const TKey&, const TValue&)> action) const {
+        for (const auto& pair : mmap) {
+            action(pair.first, pair.second);
         }
     }
 
-    // Итератор для стека
-    class Iterator {
-    private:
-        Node* current;
+    // Итератор для multimap
+    using Iterator = typename std::multimap<TKey, TValue>::iterator;
+    using ConstIterator = typename std::multimap<TKey, TValue>::const_iterator;
 
-    public:
-        Iterator(Node* node) : current(node) {}
-
-        T& operator*() const { return current->data; }
-        Iterator& operator++() {
-            current = current->next;
-            return *this;
-        }
-        bool operator!=(const Iterator& other) const { return current != other.current; }
-    };
-
-    Iterator begin() const { return Iterator(topNode); }
-    Iterator end() const { return Iterator(nullptr); }
-
-   
+    Iterator begin() { return mmap.begin(); }
+    Iterator end() { return mmap.end(); }
+    ConstIterator begin() const { return mmap.begin(); }
+    ConstIterator end() const { return mmap.end(); }
 };
 
 #endif

@@ -40,12 +40,30 @@ std::istream& operator>>(std::istream& input, Bus& busObj) {
         throw; // Перебрасываем исключение
     }
 
-    std::cout << "Введите маршрутные километры: ";
-    if (!(input >> busObj.marKM) || busObj.marKM <= 0) {
-        throw Exception_Vvod("Некорректное значение маршрутных километров.");
-    }
+    do {
+        std::cout << "Введите маршрутные километры: ";
+        if (input >> busObj.marKM && busObj.marKM > 0) {
+            break;
+        }
+        std::cerr << "Некорректное значение маршрутных километров. Повторите ввод." << std::endl;
+        input.clear();
+        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    } while (true);
 
     return input;
+}
+
+
+void Bus::serializeBinary(std::ofstream& output) const {
+	Passanger::serializeBinary(output); // Сериализация полей базового класса
+	output.write(reinterpret_cast<const char*>(&marKM), sizeof(marKM));
+}
+
+void Bus::deserializeBinary(std::ifstream& input) {
+	Passanger::deserializeBinary(input); // Десериализация полей базового класса
+	if (!input.read(reinterpret_cast<char*>(&marKM), sizeof(marKM))) {
+		throw Exception_Vvod("Ошибка при чтении данных Bus.");
+	}
 }
 
 std::ostream& operator<<(std::ostream& output, const Bus& busObj) {

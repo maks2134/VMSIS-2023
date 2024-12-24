@@ -5,8 +5,8 @@
 #include "Contant.h"
 #include <iostream>
 #include <iomanip>
-#include <map>
 #include "TrollFile.h"
+#include <map>
 
 #define YELLOW  "\033[33m"
 #define RED     "\033[31m"
@@ -18,7 +18,7 @@ public:
     void showMenu();
 
 private:
-    std::multimap<int, Troll> trolls; // Используем multimap для хранения Troll
+    std::multimap<int, Troll> trolls; // Используем multimap для хранения троллейбусов
 
     void addTroll();
     void displayTrolls() const;
@@ -28,7 +28,9 @@ private:
     void searchTroll() const;
     void sortTrolls();
     void removeByCondition();
-    void filterTrolls() const;
+    void countTrollsByCondition() const;
+    void loadTrollsFromBinaryFile();
+    void saveTrollsToBinaryFile();
 };
 
 #endif
